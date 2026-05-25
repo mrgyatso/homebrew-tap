@@ -12,14 +12,20 @@ cask "claude-code-companion" do
   app "Companion Overlay.app"
   binary "#{appdir}/Companion Overlay.app/Contents/Resources/scripts/companion"
 
+  # Unsigned preview build. The `companion` CLI and the PostToolUse hook exec the
+  # app binary directly (not via LaunchServices), so a quarantined unsigned app
+  # gets killed and trashed by Gatekeeper on first run. Clear the flag at install
+  # time so the app launches. Remove this once the build is signed + notarized.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Companion Overlay.app"]
+  end
+
   caveats <<~EOS
-    Companion Overlay is an unsigned preview build. On first launch macOS
-    Gatekeeper will block it. Either right-click the app in /Applications and
-    choose Open, or clear the quarantine flag:
+    Companion Overlay is an unsigned preview build. This cask clears the macOS
+    quarantine flag for you on install, so no right-click → Open is needed.
 
-      xattr -dr com.apple.quarantine "/Applications/Companion Overlay.app"
-
-    Then verify your setup with:
+    Verify your setup any time with:
 
       companion doctor
   EOS
