@@ -1,6 +1,6 @@
 cask "helpdesk-companion" do
-  version "0.2.0"
-  sha256 "21b62a316ba99bfbe5000201198ca291ef35dcebd405bc054d70087bc0b7ae20"
+  version "0.2.1"
+  sha256 "20692938c505551b4b02875307326dd31e46b6e45ada70ff195c685e1e60c6e2"
 
   url "https://github.com/mrgyatso/helpdesk-companion/releases/download/v#{version}/Helpdesk.Companion_#{version}_universal.dmg"
   name "Helpdesk Companion"
