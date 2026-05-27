@@ -1,6 +1,6 @@
 cask "claude-code-companion" do
-  version "0.1.3"
-  sha256 "b6118f644a4d3452c577b0af58a8949cd185a88bfdef82967e3754c47bab5bf7"
+  version "0.1.4"
+  sha256 "a70e748034c1425d0fdb7332ebf02fe43e9c6aef3c965ec25601a34654a4a429"
 
   url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_#{version}_universal.dmg"
   name "Companion Overlay"
