@@ -1,8 +1,11 @@
 cask "claude-code-companion" do
-  version "0.1.4"
-  sha256 "a70e748034c1425d0fdb7332ebf02fe43e9c6aef3c965ec25601a34654a4a429"
+  version "0.2.0"
+  sha256 "ee1e51e019c7a086e874c6d5b13a04e135603ed36f714cc2c3f8c25e33b4b7c8"
 
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_#{version}_universal.dmg"
+  # 0.2.0 is a plugin-only release; the overlay binary is unchanged from 0.1.5,
+  # so the DMG asset name still embeds 0.1.5. The cask version tracks the
+  # public release tag (v0.2.0), not the embedded overlay version.
+  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.5_universal.dmg"
   name "Companion Overlay"
   desc "Floating overlay that renders the HTML artifacts Claude Code writes"
   homepage "https://github.com/mrgyatso/claude-code-companion"
@@ -82,13 +85,14 @@ cask "claude-code-companion" do
       companion doctor
 
     For the auto-pop loop — so Claude's HTML artifacts open in the overlay
-    automatically — install the Claude Code plugin (which also adds a
-    Stop-hook backstop so deliverables don't get lost in walls of terminal
-    text):
+    automatically — install the Claude Code plugin:
 
       /plugin marketplace add mrgyatso/claude-code-companion
       /plugin install companion@claude-code-companion
 
-    Then explore /companion:doctor and /companion:example inside Claude Code.
+    The plugin ships two modes: `agent` (default — Claude judges when an
+    artifact helps) and `manual` (no auto-rendering; pull on demand via
+    `/html`). Flip with `/companion:mode agent|manual|status`. Explore
+    `/companion:doctor` and `/companion:example` inside Claude Code.
   EOS
 end
