@@ -1,10 +1,10 @@
 cask "claude-code-companion" do
-  version "0.4.7"
-  sha256 "6b654f40aee51107031030cc7dee91e406c12bcbe7f2206fc54c05390b755db2"
+  version "0.4.8"
+  sha256 "ea2af0a3e5b38576c191ffd79ea0830bb236edf9075fa29e4ee81da2db1a617d"
 
-  # The cask version tracks the public release tag (v0.4.7); the DMG asset name
-  # embeds the overlay's own version (0.1.8), which moves on its own cadence.
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.8_universal.dmg"
+  # The cask version tracks the public release tag (v0.4.8); the DMG asset name
+  # embeds the overlay's own version (0.1.9), which moves on its own cadence.
+  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.9_universal.dmg"
   name "Companion Overlay"
   desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
