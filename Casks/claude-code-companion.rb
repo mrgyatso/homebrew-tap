@@ -9,10 +9,25 @@ cask "claude-code-companion" do
   desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
 
-  depends_on macos: ">= :big_sur"
+  depends_on macos: :big_sur
 
   app "Companion Overlay.app"
   binary "#{appdir}/Companion Overlay.app/Contents/Resources/scripts/companion"
+
+  # The overlay is a long-lived daemon that holds a single-instance socket for the
+  # life of the login session. Brew swaps the bundle on disk but does not stop the
+  # process, so without this the OLD binary keeps running and keeps the socket —
+  # and the freshly installed build forwards its args to it and exits 0, silently.
+  # The upgrade looks like it did nothing.
+  #
+  # `quit:` is the polite ask, and it is not sufficient on its own: builds up to
+  # 0.4.8 call `api.prevent_exit()` on every ExitRequested, so they refuse an
+  # AppleScript quit and brew spins for its full 10s timeout. `signal:` is what
+  # actually lands — SIGTERM is not trappable by the Tauri event loop. Keep both:
+  # once every install is past 0.4.8, `quit:` succeeds first and `signal:` finds
+  # no process left to signal.
+  uninstall quit:   "com.claudecode.companion-overlay",
+            signal: ["TERM", "com.claudecode.companion-overlay"]
 
   # Unsigned preview build. The `companion` CLI and the PostToolUse hook exec the
   # app binary directly (not via LaunchServices), so a quarantined unsigned app
@@ -22,42 +37,23 @@ cask "claude-code-companion" do
     system_command "/usr/bin/xattr",
                    args: ["-dr", "com.apple.quarantine", "#{appdir}/Companion Overlay.app"]
 
-    # Autostart on login: drop a LaunchAgent so the daemon is up before the
-    # first artifact write of each session — fixes the "nothing pops after a
-    # reboot because the daemon wasn't running yet" issue. User can remove via
-    # `launchctl unload` or via the `brew uninstall --zap` path below.
+    # No autostart. Earlier versions dropped a RunAtLoad LaunchAgent here so the
+    # daemon was up before the first artifact of a session. It isn't worth the
+    # cost: the app then runs from login whether or not you use it, and — because
+    # it owns a single-instance socket — a running copy silently swallows every
+    # attempt to launch a newer build. Open it when you want it, or `companion
+    # board`. Any LaunchAgent left by an earlier install is removed below.
     plist_path = File.join(Dir.home, "Library", "LaunchAgents", "Companion Overlay.plist")
-    exe_path   = "#{appdir}/Companion Overlay.app/Contents/MacOS/companion-overlay"
-    File.write(plist_path, <<~PLIST)
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-        <key>Label</key>
-        <string>Companion Overlay</string>
-        <key>ProgramArguments</key>
-        <array>
-          <string>#{exe_path}</string>
-        </array>
-        <key>RunAtLoad</key>
-        <true/>
-        <key>KeepAlive</key>
-        <false/>
-        <key>ProcessType</key>
-        <string>Interactive</string>
-      </dict>
-      </plist>
-    PLIST
-    # Load it now so autostart starts working without a reboot (idempotent —
-    # safe if already loaded from a prior install). Failure here is non-fatal
-    # (the plist still takes effect on next login).
-    system_command "/bin/launchctl", args: ["load", "-w", plist_path],
-                   sudo: false, print_stderr: false
+    if File.exist?(plist_path)
+      system_command "/bin/launchctl", args: ["unload", "-w", plist_path],
+                     sudo: false, print_stderr: false
+      File.delete(plist_path)
+    end
   end
 
   uninstall_preflight do
-    # Stop and unregister the LaunchAgent so an uninstall doesn't leave a
-    # dangling plist that tries to launch a deleted binary on next login.
+    # Stop and unregister the LaunchAgent an older install may have left behind,
+    # so an uninstall can't leave a plist pointing at a deleted binary.
     plist_path = File.join(Dir.home, "Library", "LaunchAgents", "Companion Overlay.plist")
     if File.exist?(plist_path)
       system_command "/bin/launchctl", args: ["unload", plist_path],
@@ -95,9 +91,9 @@ cask "claude-code-companion" do
     Companion Overlay is an unsigned preview build. This cask clears the macOS
     quarantine flag for you on install, so no right-click → Open is needed.
 
-    The overlay autostarts on every login (via a LaunchAgent dropped at
-    ~/Library/LaunchAgents/Companion Overlay.plist) so it's already running
-    when you start a new session. Remove with `launchctl unload`, or get rid
-    of all state with `brew uninstall --zap claude-code-companion`.
+    The overlay does not start on login — open it when you want it, or run
+    `companion board`. It stays running in the background after that, so the
+    next artifact pops without a cold start. Get rid of all state with
+    `brew uninstall --zap claude-code-companion`.
   EOS
 end
