@@ -1,13 +1,12 @@
 cask "claude-code-companion" do
-  version "0.2.0"
-  sha256 "ee1e51e019c7a086e874c6d5b13a04e135603ed36f714cc2c3f8c25e33b4b7c8"
+  version "0.4.7"
+  sha256 "6b654f40aee51107031030cc7dee91e406c12bcbe7f2206fc54c05390b755db2"
 
-  # 0.2.0 is a plugin-only release; the overlay binary is unchanged from 0.1.5,
-  # so the DMG asset name still embeds 0.1.5. The cask version tracks the
-  # public release tag (v0.2.0), not the embedded overlay version.
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.5_universal.dmg"
+  # The cask version tracks the public release tag (v0.4.7); the DMG asset name
+  # embeds the overlay's own version (0.1.8), which moves on its own cadence.
+  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.8_universal.dmg"
   name "Companion Overlay"
-  desc "Floating overlay that renders the HTML artifacts Claude Code writes"
+  desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
 
   depends_on macos: ">= :big_sur"
@@ -72,6 +71,27 @@ cask "claude-code-companion" do
   ]
 
   caveats <<~EOS
+    One more command finishes the install — it wires the Claude Code plugin,
+    creates the watched folder, and runs a health check:
+
+      companion setup
+
+    It needs Node 18 or later (`brew install node`). Claude Code ships as a
+    native binary, so having `claude` does not mean you have `node` — and the
+    plugin's hooks are Node scripts.
+
+    Then open the app with `companion board`.
+
+    By default Companion only tracks sessions the app itself starts. To track
+    every `claude` session wherever you launch it:
+
+      companion setup --external-terminals
+
+    Sanity-check the install any time with `companion doctor`. Inside Claude
+    Code, `/companion:html` renders a page on demand, `/companion:mode
+    selective|always|manual` sets how eagerly pages are generated, and
+    `/companion:example` explains the app.
+
     Companion Overlay is an unsigned preview build. This cask clears the macOS
     quarantine flag for you on install, so no right-click → Open is needed.
 
@@ -79,20 +99,5 @@ cask "claude-code-companion" do
     ~/Library/LaunchAgents/Companion Overlay.plist) so it's already running
     when you start a new session. Remove with `launchctl unload`, or get rid
     of all state with `brew uninstall --zap claude-code-companion`.
-
-    Sanity-check the install any time with:
-
-      companion doctor
-
-    For the auto-pop loop — so Claude's HTML artifacts open in the overlay
-    automatically — install the Claude Code plugin:
-
-      /plugin marketplace add mrgyatso/claude-code-companion
-      /plugin install companion@claude-code-companion
-
-    The plugin ships two modes: `agent` (default — Claude judges when an
-    artifact helps) and `manual` (no auto-rendering; pull on demand via
-    `/html`). Flip with `/companion:mode agent|manual|status`. Explore
-    `/companion:doctor` and `/companion:example` inside Claude Code.
   EOS
 end
