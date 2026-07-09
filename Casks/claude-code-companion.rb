@@ -1,10 +1,10 @@
 cask "claude-code-companion" do
-  version "0.4.8"
-  sha256 "ea2af0a3e5b38576c191ffd79ea0830bb236edf9075fa29e4ee81da2db1a617d"
+  version "0.4.9"
+  sha256 "333e252f36a33fee98a05386298ac23f35f1f063dab27b1d5262bf0476c3b2f1"
 
-  # The cask version tracks the public release tag (v0.4.8); the DMG asset name
-  # embeds the overlay's own version (0.1.9), which moves on its own cadence.
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.9_universal.dmg"
+  # The cask version tracks the public release tag (v0.4.9); the DMG asset name
+  # embeds the overlay's own version (0.1.10), which moves on its own cadence.
+  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.10_universal.dmg"
   name "Companion Overlay"
   desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
@@ -14,18 +14,15 @@ cask "claude-code-companion" do
   app "Companion Overlay.app"
   binary "#{appdir}/Companion Overlay.app/Contents/Resources/scripts/companion"
 
-  # The overlay is a long-lived daemon that holds a single-instance socket for the
-  # life of the login session. Brew swaps the bundle on disk but does not stop the
-  # process, so without this the OLD binary keeps running and keeps the socket —
-  # and the freshly installed build forwards its args to it and exits 0, silently.
-  # The upgrade looks like it did nothing.
+  # The overlay is a long-lived daemon holding a single-instance socket. Brew swaps
+  # the bundle on disk but does not stop the process, so without this the OLD binary
+  # keeps running and keeps the socket — and the freshly installed build forwards its
+  # argv to it and exits 0, silently. The upgrade looks like it did nothing.
   #
-  # `quit:` is the polite ask, and it is not sufficient on its own: builds up to
-  # 0.4.8 call `api.prevent_exit()` on every ExitRequested, so they refuse an
-  # AppleScript quit and brew spins for its full 10s timeout. `signal:` is what
-  # actually lands — SIGTERM is not trappable by the Tauri event loop. Keep both:
-  # once every install is past 0.4.8, `quit:` succeeds first and `signal:` finds
-  # no process left to signal.
+  # `quit:` does the work: an AppleScript quit becomes `-[NSApplication terminate:]`,
+  # which nothing in the Tauri stack intercepts. `signal:` is the backstop for a build
+  # that is wedged and cannot service the Apple Event; brew runs it after `quit:`, by
+  # which point there is normally no process left to signal.
   uninstall quit:   "com.claudecode.companion-overlay",
             signal: ["TERM", "com.claudecode.companion-overlay"]
 
