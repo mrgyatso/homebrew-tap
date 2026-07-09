@@ -9,7 +9,12 @@ cask "claude-code-companion" do
   desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
 
-  depends_on macos: ">= :big_sur"
+  # Companion is useless without Claude Code, and its plugin hooks are Node
+  # programs — Claude Code ships as a native binary, so `claude` on PATH does not
+  # imply `node`. Pulling both in means a fresh Mac needs nothing but Homebrew.
+  depends_on cask: "claude-code"
+  depends_on formula: "node"
+  depends_on macos: :big_sur
 
   app "Companion Overlay.app"
   binary "#{appdir}/Companion Overlay.app/Contents/Resources/scripts/companion"
@@ -76,9 +81,8 @@ cask "claude-code-companion" do
 
       companion setup
 
-    It needs Node 18 or later (`brew install node`). Claude Code ships as a
-    native binary, so having `claude` does not mean you have `node` — and the
-    plugin's hooks are Node scripts.
+    Claude Code and Node came in with this cask. If you haven't signed in to
+    Claude Code yet, run `claude` once first.
 
     Then open the app with `companion board`.
 
