@@ -1,10 +1,11 @@
 cask "claude-code-companion" do
-  version "0.4.9"
-  sha256 "333e252f36a33fee98a05386298ac23f35f1f063dab27b1d5262bf0476c3b2f1"
+  version "0.6.0"
+  sha256 "322ca28c9a907739d3e014291357d6b90494100a4913da20f21d505346a2d38a"
 
-  # The cask version tracks the public release tag (v0.4.9); the DMG asset name
-  # embeds the overlay's own version (0.1.10), which moves on its own cadence.
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_0.1.10_universal.dmg"
+  # Since v0.6.0 the app version tracks the release tag (CI enforces it), so the
+  # DMG asset name is fully derivable from `version`. The DMG is built by CI
+  # (release-macos.yml) — no more hand-built bundles.
+  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Companion.Overlay_#{version}_universal.dmg"
   name "Companion Overlay"
   desc "Desktop surface where your coding agents show their work and ask what's next"
   homepage "https://github.com/mrgyatso/claude-code-companion"
