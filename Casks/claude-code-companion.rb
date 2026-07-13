@@ -82,9 +82,10 @@ cask "claude-code-companion" do
       companion setup --external-terminals
 
     Sanity-check the install any time with `companion doctor`. Inside Claude
-    Code, `/companion:html` renders a page on demand, `/companion:mode
-    selective|always|manual` sets how eagerly pages are generated, and
-    `/companion:example` explains the app.
+    Code, `/companion:html` renders a fresh page on demand and
+    `/companion:example` explains the app. Every turn ends with a page, so
+    there is no eagerness to tune — a quick lookup gets a compact card, a
+    decision gets a full document.
 
     Companion Overlay is an unsigned preview build. This cask clears the macOS
     quarantine flag for you on install, so no right-click → Open is needed.
