@@ -1,6 +1,6 @@
 cask "claude-code-companion" do
-  version "0.9.0"
-  sha256 "31c5b415409a00848372dbce2eae12665dcfed5c0c46dbb606825a0bf84cbced"
+  version "0.10.0"
+  sha256 "23dbd9d5674b359a05ce26c38a526f7b9f7f2b883c4b9ed1c918e7439e046349"
 
   # Since v0.6.0 the app version tracks the release tag (CI enforces it), so the
   # DMG asset name is fully derivable from `version`. The DMG is built by CI
