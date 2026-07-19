@@ -6,14 +6,12 @@ cask "shelly" do
   # DMG asset name is fully derivable from `version`. The DMG is built by CI
   # (release-macos.yml) — no more hand-built bundles.
   #
-  # The URL keeps the claude-code-companion repo path on purpose: that is where the
-  # releases actually live today. If the repo is ever renamed to mrgyatso/shelly,
-  # GitHub redirects the old path, so this keeps resolving either way — whereas
-  # pointing at mrgyatso/shelly before the rename would 404 every download.
-  url "https://github.com/mrgyatso/claude-code-companion/releases/download/v#{version}/Shelly_#{version}_universal.dmg"
+  # The repo was renamed claude-code-companion -> shelly with 0.10.2. GitHub redirects
+  # the old path, so older casks keep resolving; this points at the real name.
+  url "https://github.com/mrgyatso/shelly/releases/download/v#{version}/Shelly_#{version}_universal.dmg"
   name "Shelly"
   desc "Shell your coding agents work inside — they show their work and ask what's next"
-  homepage "https://github.com/mrgyatso/claude-code-companion"
+  homepage "https://github.com/mrgyatso/shelly"
 
   # Renamed from claude-code-companion in 0.10.2. tap_migrations.json moves the
   # installed token across, but Homebrew will not remove an app bundle this cask
