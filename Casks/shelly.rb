@@ -1,6 +1,6 @@
 cask "shelly" do
-  version "0.10.2"
-  sha256 "370af6db83e4478192e41856518e06caae777097b9f15f23fd513714a91233dc"
+  version "0.11.0"
+  sha256 "a3fdc534a5d86060e4ead7f97328f93a68dda03bad65a25da9a9862a399837c6"
 
   # Since v0.6.0 the app version tracks the release tag (CI enforces it), so the
   # DMG asset name is fully derivable from `version`. The DMG is built by CI
